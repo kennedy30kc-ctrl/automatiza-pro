@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Prendas - Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Poppins:wght@300;400;600;700;800&family=Playfair+Display:wght@700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #E5E7EB;
+            --secondary: #9CA3AF;
+            --accent: #000000;
+            --light: #F3F4F6;
+            --dark: #111827;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            background: linear-gradient(135deg, #1F2937 0%, #111827 50%, #1F2937 100%);
+            color: #E5E7EB;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(229, 231, 235, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(156, 163, 175, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
+        header {
+            background: linear-gradient(135deg, #1F2937, #111827);
+            border-bottom: 3px solid var(--primary);
+            padding: 30px 0;
+            margin-bottom: 50px;
+            box-shadow: 0 4px 20px rgba(229, 231, 235, 0.1);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: rgba(229, 231, 235, 0.1);
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .pulse-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--primary); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 8px rgba(229, 231, 235, 0.1); }
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(17, 24, 39, 0.8));
+            border: 2px solid var(--primary);
+            border-left: 5px solid var(--primary);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(229, 231, 235, 0.15);
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            display: block;
+            font-weight: 700;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            font-family: 'Space Mono', monospace;
+        }
+        .prendas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+        .prenda-card {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.6), rgba(17, 24, 39, 0.6));
+            border: 2px solid var(--secondary);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        .prenda-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(229, 231, 235, 0.1);
+        }
+        .prenda-nombre {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .prenda-info {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        .prenda-estado {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(229, 231, 235, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid var(--primary);
+        }
+        .table-card {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.6), rgba(17, 24, 39, 0.6));
+            border: 2px solid var(--secondary);
+            border-radius: 20px;
+            padding: 35px;
+            backdrop-filter: blur(10px);
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        thead tr {
+            border-bottom: 2px solid var(--primary);
+        }
+        th {
+            padding: 15px;
+            text-align: left;
+            color: var(--primary);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(229, 231, 235, 0.1);
+            color: var(--secondary);
+        }
+        tbody tr:hover {
+            background: rgba(229, 231, 235, 0.05);
+        }
+        .badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .badge-pendiente {
+            background: rgba(229, 231, 235, 0.15);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        .badge-completado {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22C55E;
+            border: 1px solid #22C55E;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .prendas-grid { grid-template-columns: 1fr; }
+            .header-content { flex-direction: column; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>👗 Control de Prendas</h1>
+            <div class="status">
+                <div class="pulse-dot"></div>
+                EN VIVO
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <label class="stat-label">Prendas en Taller</label>
+                <div class="stat-number">87</div>
+            </div>
+            <div class="stat-card">
+                <label class="stat-label">En Proceso</label>
+                <div class="stat-number">24</div>
+            </div>
+            <div class="stat-card">
+                <label class="stat-label">Completadas Hoy</label>
+                <div class="stat-number">12</div>
+            </div>
+            <div class="stat-card">
+                <label class="stat-label">Pendientes Entrega</label>
+                <div class="stat-number">15</div>
+            </div>
+        </div>
+
+        <h2 style="font-size: 1.8rem; margin-bottom: 30px; color: var(--primary);">Prendas en Taller</h2>
+        <div class="prendas-grid">
+            <div class="prenda-card">
+                <div class="prenda-nombre">Vestido Azul</div>
+                <div class="prenda-info">
+                    <strong>Cliente:</strong> María López<br>
+                    <strong>Fecha Entrada:</strong> 15/05/2026<br>
+                    <strong>Talla:</strong> M
+                </div>
+                <div class="prenda-estado">
+                    <span>Arreglos:</span>
+                    <span style="color: var(--primary);">Entalar</span>
+                </div>
+            </div>
+
+            <div class="prenda-card">
+                <div class="prenda-nombre">Traje Gris</div>
+                <div class="prenda-info">
+                    <strong>Cliente:</strong> Juan Pérez<br>
+                    <strong>Fecha Entrada:</strong> 20/05/2026<br>
+                    <strong>Talla:</strong> L
+                </div>
+                <div class="prenda-estado">
+                    <span>Arreglos:</span>
+                    <span style="color: var(--primary);">Nudo</span>
+                </div>
+            </div>
+
+            <div class="prenda-card">
+                <div class="prenda-nombre">Pantalón Negro</div>
+                <div class="prenda-info">
+                    <strong>Cliente:</strong> Carlos Ruiz<br>
+                    <strong>Fecha Entrada:</strong> 28/05/2026<br>
+                    <strong>Talla:</strong> 32
+                </div>
+                <div class="prenda-estado">
+                    <span>Arreglos:</span>
+                    <span style="color: var(--primary);">Cintura</span>
+                </div>
+            </div>
+
+            <div class="prenda-card">
+                <div class="prenda-nombre">Blusa Blanca</div>
+                <div class="prenda-info">
+                    <strong>Cliente:</strong> Ana Martínez<br>
+                    <strong>Fecha Entrada:</strong> 15/05/2026<br>
+                    <strong>Talla:</strong> S
+                </div>
+                <div class="prenda-estado">
+                    <span>Arreglos:</span>
+                    <span style="color: var(--primary);">Mangas</span>
+                </div>
+            </div>
+
+            <div class="prenda-card">
+                <div class="prenda-nombre">Falda Larga</div>
+                <div class="prenda-info">
+                    <strong>Cliente:</strong> Laura González<br>
+                    <strong>Fecha Entrada:</strong> 10/05/2026<br>
+                    <strong>Talla:</strong> M
+                </div>
+                <div class="prenda-estado">
+                    <span>Arreglos:</span>
+                    <span style="color: var(--primary);">Dobladillo</span>
+                </div>
+            </div>
+
+            <div class="prenda-card">
+                <div class="prenda-nombre">Chaqueta Formal</div>
+                <div class="prenda-info">
+                    <strong>Cliente:</strong> Roberto Silva<br>
+                    <strong>Fecha Entrada:</strong> 28/05/2026<br>
+                    <strong>Talla:</strong> XL
+                </div>
+                <div class="prenda-estado">
+                    <span>Arreglos:</span>
+                    <span style="color: var(--primary);">Ajuste</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <h2 style="margin-bottom: 30px; font-size: 1.3rem; color: var(--primary); text-transform: uppercase; letter-spacing: 2px;">Movimientos Recientes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Prenda</th>
+                        <th>Arreglos</th>
+                        <th>Entrada</th>
+                        <th>Entrega</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>María López</strong></td>
+                        <td>Vestido Azul</td>
+                        <td>Entalar</td>
+                        <td>15/05/2026</td>
+                        <td>15/05/2026</td>
+                        <td><span class="badge badge-completado">Completado</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Juan Pérez</strong></td>
+                        <td>Traje Gris</td>
+                        <td>Nudo</td>
+                        <td>20/05/2026</td>
+                        <td>20/05/2026</td>
+                        <td><span class="badge badge-pendiente">En Proceso</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Carlos Ruiz</strong></td>
+                        <td>Pantalón</td>
+                        <td>Cintura</td>
+                        <td>28/05/2026</td>
+                        <td>27/05/2026</td>
+                        <td><span class="badge badge-completado">Entregado</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ana Martínez</strong></td>
+                        <td>Blusa Blanca</td>
+                        <td>Mangas</td>
+                        <td>15/05/2026</td>
+                        <td>-</td>
+                        <td><span class="badge badge-pendiente">En Proceso</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Laura González</strong></td>
+                        <td>Falda Larga</td>
+                        <td>Dobladillo</td>
+                        <td>10/05/2026</td>
+                        <td>10/05/2026</td>
+                        <td><span class="badge badge-completado">Entregado</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
