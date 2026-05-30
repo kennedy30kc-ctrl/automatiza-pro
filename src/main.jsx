@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-importar * como XLSX desde "xlsx";
+import * as XLSX from "xlsx";
 importar {
   Iniciar sesión, cerrar sesión, tarjeta de crédito, QrCode, CheckCircle2, AlertCircle,
   Inicio, Configuración, Usuarios, Edificio2, Teléfono, Correo, Marcador de mapa,
